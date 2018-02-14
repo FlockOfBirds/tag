@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="com.mendix.widget.custom.tag.Tag" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../xsd/widget.xsd">
+    <name>Tags</name>
+    <description>Display, add, update and remove tags</description>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAh1JREFUOBFjZCAShDY0qACVOiErZ/z37zkyHyc7uKZGNaSmJv3f////YRjI/A8SY8GpCyoB0gzU5Ly6pWX64TNnGM5fvcpgqK3NYGtiwvD3/39GJnwG+JSWqv7+/dtlFVDz379/GV5//MhQkJDACKJB4O+fP4w4XeBVVKQGVOO6pqNjys+fPxmYmZkZNJWVGXaePPlfVlwcbMC/f/+YGMEsNAKkGeg8t419fZN/fP/OwMTICMYgQ0BsEO1dVJTLzMi4C00rA4NHfr66S15e7ndgIL358uX/u69f/3/49u3/p+/f/3/58eP/b6A4SB6kDkOzY2amunNWVv5XoKKXHz/+f/X5M4ohv4DiIHmQOphmZhjDIS1NA+hsry3Tp/d//PABLAz2H9DJIMDFxcXgkp5exPDv344DM2feBAsCCbCsRUqKJtOfP5475s/vff/uHdzPML/z8fExOCcmFv9nYNh2fMGCGzDNIJrZIjZW8/+fP947Fy7sefvmDbIcmM3Hz8/gGBtbyvD//7YTixahaAYpYPnz54/vnmXLOl++egWxGSj4D6yVgUFQUJDBPiqqHBhdW8+tXHkdKoxCMQETwxb70NAKMTExBmCKA2NgWDEICgkxWAPFQfK4NMNN0vL11Vb19Kz+ANR56+XL/x+BNIgPEocrIsQQt7TUlbC0bAIZAqJBfEJ6QPIoKZFbW9sAGFjhDIyMK79evXqBGAMAuPsP791vC+0AAAAASUVORK5CYII=</icon>
+    <properties>
+        <property key="tagEntity" type="entity" isPath="yes" pathType="referenceSet">
+            <caption>Data source (path)</caption>
+            <category>Tags</category>
+            <description>The reference set to tags related to the context object</description>
+        </property>
+        <property key="tagAttribute" type="attribute" entityProperty="tagEntity">
+            <caption>Value attribute</caption>
+            <category>Tags</category>
+            <description>The attribute that holds value that is shown in the tag</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+            </attributeTypes>
+        </property>
+        <property key="tagLimit" type="integer" defaultValue="0">
+            <caption>Tag limit</caption>
+            <category>Tags</category>
+            <description>When larger than 0, it limits the number of tags that can be added</description>
+        </property>
+        <property key="enableSuggestions" type="boolean" defaultValue="false">
+            <caption>Enable suggestions</caption>
+            <category>Suggestion</category>
+            <description>Provide a dropdown with suggestions while the user is typing</description>
+        </property>
+        <property key="tagConstraint" type="entityConstraint" entityProperty="tagEntity" required="false">
+            <caption>XPath constraint</caption>
+            <category>Suggestion</category>
+            <description>Optional constraint to limit the tag suggestions</description>
+        </property>
+        <property key="lazyLoad" type="boolean" defaultValue="true">
+            <caption>Lazy loading</caption>
+            <category>Suggestion</category>
+            <description>Suggestions are only loaded when user starts typing</description>
+        </property>
+        <property key="editable" type="enumeration" defaultValue="default">
+            <caption>Editable</caption>
+            <category>Appearance</category>
+            <description>The default option is based on the page settings and the attribute's write access</description>
+            <enumerationValues>
+                <enumerationValue key="default">Default</enumerationValue>
+                <enumerationValue key="never">Never</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="tagStyle" type="enumeration" defaultValue="default">
+            <caption>Tag style</caption>
+            <category>Appearance</category>
+            <description>Color to apply to the tags</description>
+            <enumerationValues>
+                <enumerationValue key="default">Default</enumerationValue>
+                <enumerationValue key="primary">Primary</enumerationValue>
+                <enumerationValue key="success">Success</enumerationValue>
+                <enumerationValue key="info">Info</enumerationValue>
+                <enumerationValue key="inverse">Inverse</enumerationValue>
+                <enumerationValue key="warning">Warning</enumerationValue>
+                <enumerationValue key="danger">Danger</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="inputPlaceholder" type="translatableString" required="false">
+            <caption>Placeholder</caption>
+            <category>Appearance</category>
+            <description/>
+            <translations>
+                <translation lang="en_US">Add a tag</translation>
+                <translation lang="nl_NL">Voeg een tag toe</translation>
+            </translations>
+        </property>
+        <property key="tagLimitMessage" type="translatableString">
+            <caption>Tag limit message</caption>
+            <category>Appearance</category>
+            <description>The placeholder {limit} will be replace the 'Tag limit' number</description>
+            <translations>
+                <translation lang="en_US">Maximum of {limit} tags are allowed</translation>
+                <translation lang="nl_NL">Maximaal {limit} tags zijn toegestaan</translation>
+            </translations>
+        </property>
+        <property key="tagDuplicateMessage" type="translatableString">
+            <caption>Duplicate message</caption>
+            <category>Appearance</category>
+            <description>The placeholder {tag} will be replace the 'Value attribute'</description>
+            <translations>
+                <translation lang="en_US">Duplicate {tag}</translation>
+                <translation lang="nl_NL">Dubbele {tag}</translation>
+            </translations>
+        </property>
+        <property key="afterCreateMicroflow" type="microflow" required="false">
+            <caption>After create microflow</caption>
+            <category>Events</category>
+            <description>Microflow to call after a new tag object has been created</description>
+            <returnType type="Void"/>
+        </property>
+        <property key="onChangeMicroflow" type="microflow" required="false">
+            <caption>On change microflow</caption>
+            <category>Events</category>
+            <description>Microflow called tags added or removed</description>
+            <returnType type="Void"/>
+        </property>
+    </properties>
+</widget>

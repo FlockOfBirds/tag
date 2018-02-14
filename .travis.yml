@@ -1,0 +1,39 @@
+sudo: required
+language: node_js
+node_js:
+- "6"
+before_install:
+- npm i -g npm@latest
+- npm install grunt-cli -g
+- export CHROME_BIN=chromium-browser
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- wget -q -O - http://opensource.wandisco.com/wandisco-debian.gpg | sudo apt-key add -
+- sudo sh -c 'echo "deb http://opensource.wandisco.com/debian/ wheezy svn17" > /etc/apt/sources.list.d/wandisco-subversion.list'
+- sudo apt-get -qq update
+- sudo apt-get install -y --allow-downgrades subversion=1.7.22-1+WANdisco libsvn1=1.7.22-1+WANdisco
+- svn --version
+after_success:
+- bash <(curl -s https://codecov.io/bash)
+cache:
+  directories:
+  - node_modules
+env:
+  global:
+  - MX_APP_NAME=tag100
+  - MX_BRANCH_NAME=trunk
+  - MX_PROJECT_ID=f0be9347-5755-44fe-8e25-6ec1c38befe0
+  - secure: CvE9K9XGm1GD0tTM38cHX1/OYhgvgHZTHbIs+PMGiSb4FVATN0BRLUay3IqvoohnxKcBtUbSGqCZBZ6CNRxqdcq0KRX83n+bPibD2XOipEvW6SOOiiF91qV1qTJqfbPXn+lsshZihrYAS1aBfEeqhWniVcqPlnsC20ypYBx8TI2jMMylKQfb+D8tXX2XkY+rlZcFIA0tDJ602hF29bN79mzTxh/zDO8+0DHpvghJtTFDJrWCrPUrX5vSXy+FQR3QFkhRTD7n9Y5F8OTe4WZMkhWyYj9eV6Agf1JkUZK4XT82N+3742Zzf9O/O5IeBQlWC3Vn+NqujKc6pvcui8iEH0Mm2PRGvXUxlvNLwI4sPDILO7av8TTEQY4ejrjBzwf+UJFjpBgzgTm/L8+FXsqlvqr7C3G3aHLXyCsmLF4rOU9/m5woLbOMZ4l3h0cl5YIYKCEEEQzKoyQza/yUEXm0vMGXqNI29iQXI+bu2YBB006rtOGvi8mdVJZmotuvNXmbFV6SsMPCaKX+/OIZ70zU17xdQSBrCFPLyVEhCxjR6So5KBG/EXPRq3RHtfsJsxNsxK4n1HkhocrY0snmiXwRW8YMLtBHdtU6z+uOngfogAKRD7FkdCwMYBsomP4EeyA5uXDWyT9bQcjsyi/OAJbHoEZdeL5X/aOgxUeOqPBWY68=
+  - MX_ENVIRONMENT=Sandbox
+  - MX_USER=ci@flockofbirds.org
+  - secure: j3t3w9myZxtMxRjkR1iuf31koyqYCTkTm2Nuvi/IiKdlV72NR4tJrx+Fb/e0TDzmx9gdGxSRpmb7rkcjjMDG1ceOmkS0nI7hZbRyXyLCd3Qm3oAvNVSvABpkkBLVd/+1aIMBg8om2h23OZzW60ZkW7i4jCIv8J/SHYbsd8A8PvgXAgTax5CG2hvmcqsFZx4i9m0lIs4XC1mHf6gOwB+0nnoK5bO8Q4x/rx9rcOPJjlZf5e96mPrIcPhdoJVYDaUFC8tBm5aiFz2Q0tkBKlm0XUPkS/KwUX/8gVsv48Ex/VyRZ7+T6SEtQeelRwjAVpsm0I6LDjze9UzzB2TG4frXBc0XAxf+ieAjmAaKnUPQXrhZkuW5Erd38HOsANxkUmMZkcQ29dtziInxirTMSyFPyEa3a6iFNglWBidTUtsmGaNN4ncuEsu+wq2wwfFNKbcveEXuJ4Fo1trPxVdCtri44X9g6FzfC8fNPAzQ/eqiaOqrsksyYqW2Qtqoz4Rgu1r1uYwyX647wyauJGlfc0u9y8wtU32BM0ekf3jtMnbHomZW4qPEsosnTE4fj/KuAaiIHExx6MhBdYr3RoZ2eCmYQz/PS5XnLzR/7K9tRUTaP0SIfhOlm0rw/eI+WOl/q9h+TVJNdNjxBunRyE0yP6Xbe1/KBRdEPvcEeklsx7KdgV0=
+deploy:
+  provider: releases
+  api_key:
+    secure: jkZxWr+Crfkvth5sYDuX3r/TAjGW4YTddRe41jHu9Znubo2wM7i0qAK3ByoWEQMJdyFZbYhNQVXV5JpsXH+7/NlNkOHb7SLPqrWhVGsBNSUjzWXXrJp6TJQlc1PMh/DwGxWG/Q6TQ1SyHVTAEDoi+VDXD4jV1d5pGNXrA7D/ShN5eLGs7sktl9KhBAFKfABkBGHnz1QLw8AFvtLGI7iSOVMpOhbSAxLj20NYR+cBhgx7DPGJ5Cnp5Huhz7ky75WPtdd79H0bWCZFyE01BuDnsm5Bp/W87Pg9vsIaD1WWdfdrzucxFVSaKsjC42I5/ILretlPl0Y+UO/Km3MZIch6YfIB+p7TrIn4R6qXTKdnFtW40R0ziu2UpcFCW2KV0P0rOZojPs9u/r2pxJdz/b0UDQP5hMwJoj/0R2V9VLHs24kUSystmu1wKSJVC9j74RhZJxVzO/SAUtfULHqLqINrd9ewcct163KzTq4blVDHn/5F/2Lj5r/Gkn3Qp9tdjPBwntVt46Z+tFK2fuwZ6RNkyHJVsQcyu0OS8YYxLHW1vAmK7qiwANcywn2tg7Q8KflZE04yqh3Buv1x9cLoS5BiUncS+YXuPH0M/u8pUR/fc6EEofo0PhYlndn2/xrnniunD+VYcjtD2aMjCSiHz2wmGLQGT5VOqL0xblDcxQASVvg=
+  file_glob: true
+  file: dist/release/*
+  skip_cleanup: true
+  on:
+    repo: FlockOfBirds/tag
+    tags: true
