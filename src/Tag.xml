@@ -90,13 +90,25 @@
         <property key="afterCreateMicroflow" type="microflow" required="false">
             <caption>After create microflow</caption>
             <category>Events</category>
-            <description>Microflow to call after a new tag object has been created</description>
+            <description>Microflow to be called after a new tag object has been created</description>
+            <returnType type="Void"/>
+        </property>
+        <property key="afterCreateNanoflow" type="nanoflow" required="false">
+            <caption>After create nanoflow</caption>
+            <category>Events</category>
+            <description>Nanoflow to be called after a new tag object has been created</description>
             <returnType type="Void"/>
         </property>
         <property key="onChangeMicroflow" type="microflow" required="false">
             <caption>On change microflow</caption>
             <category>Events</category>
             <description>Microflow called tags added or removed</description>
+            <returnType type="Void"/>
+        </property>
+        <property key="onChangeNanoflow" type="nanoflow" required="false">
+            <caption>On change nanoflow</caption>
+            <category>Events</category>
+            <description>Nanoflow called tags added or removed</description>
             <returnType type="Void"/>
         </property>
     </properties>
