@@ -1,5 +1,5 @@
 import { Component, createElement } from "react";
-import * as ReactDOM from "react-dom";
+import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
 
 import { Alert } from "./Alert";
@@ -76,17 +76,13 @@ export class Tag extends Component<TagProps, TagState> {
                 renderInput: this.props.enableSuggestions ? this.renderAutoComplete : undefined,
                 value: this.state.tagList
             }),
-            createElement(Alert, {
-                bootstrapStyle: "danger",
-                className: "widget-tag-alert",
-                message: this.state.alertMessage
-            })
+            createElement(Alert, { className: "widget-tag-alert" }, this.state.alertMessage)
         );
     }
 
     componentDidMount() {
-        const node = ReactDOM.findDOMNode(this);
-        const tagInputSelector = node.querySelectorAll(".react-tagsinput-input");
+        const node = findDOMNode(this) as HTMLElement;
+        const tagInputSelector = node.querySelectorAll(".react-tagsinput-input"); // TODO: use listview to improve this
 
         this.addEvents(tagInputSelector);
     }
@@ -103,8 +99,8 @@ export class Tag extends Component<TagProps, TagState> {
     }
 
     componentWillUnmount() {
-        const node = ReactDOM.findDOMNode(this);
-        const inputNodeList = node.querySelectorAll(".react-tagsinput-input");
+        const queryNode = findDOMNode(this) as HTMLElement;
+        const inputNodeList = queryNode.querySelectorAll(".react-tagsinput-input"); // FIXME: find alternative way to do so
 
         for (let i = 0; inputNodeList[i]; i++) {
             inputNodeList[i].removeEventListener("focus", this.handleFocus, true);
@@ -138,7 +134,7 @@ export class Tag extends Component<TagProps, TagState> {
         }
     }
 
-    private processTag(newTag: string) {
+    private processTag = (newTag: string) => {
         const { tagLimit, tagLimitMessage, createTag } = this.props;
         const duplicateTag = this.state.tagList.filter(oldTag => oldTag === newTag);
 

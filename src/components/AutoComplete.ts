@@ -1,5 +1,5 @@
 import { Component, createElement } from "react";
-import * as ReactDOM from "react-dom";
+import { findDOMNode } from "react-dom";
 
 import * as Autosuggest from "react-autosuggest";
 
@@ -31,8 +31,8 @@ interface AutoCompleteState {
 }
 
 export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState> {
-    private node: Element;
-    private suggestionContainer: Element;
+    private node?: Element;
+    private suggestionContainer?: Element;
 
     constructor(props: AutoCompleteProps) {
         super(props);
@@ -44,17 +44,6 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
             suggestionsLazyLoaded: [],
             value: ""
         };
-
-        this.getSuggestions = this.getSuggestions.bind(this);
-        this.getSuggestionValue = this.getSuggestionValue.bind(this);
-        this.renderSuggestion = this.renderSuggestion.bind(this);
-        this.handleOnChange = this.handleOnChange.bind(this);
-        this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
-        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
-        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
-        this.handleOnblur = this.handleOnblur.bind(this);
-        this.handleFocus = this.handleFocus.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
     render() {
@@ -79,7 +68,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     }
 
     componentDidMount() {
-        this.node = ReactDOM.findDOMNode(this);
+        this.node = findDOMNode(this) as HTMLElement;
         const suggestionInput = this.node.querySelectorAll(".react-autosuggest__input");
         if (this.node.firstElementChild) {
             this.suggestionContainer = this.node.firstElementChild.nextElementSibling as Element;
@@ -99,19 +88,21 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     }
 
     componentWillUnmount() {
-        const suggestionInput = this.node.querySelectorAll(".react-autosuggest__input");
-        if (suggestionInput) {
-            this.removeEventsListeners(suggestionInput);
+        if (this.node) {
+            const suggestionInput = this.node.querySelectorAll(".react-autosuggest__input");
+            if (suggestionInput) {
+                this.removeEventsListeners(suggestionInput);
+            }
         }
     }
 
     // Call this function every time you need to update suggestions in state.
-    private onSuggestionsFetchRequested(suggestion: Suggestion) {
+    private onSuggestionsFetchRequested = (suggestion: Suggestion) => {
         this.setState({ suggestions: this.getSuggestions(suggestion) });
     }
 
     // Calculate suggestions from the input value.
-    private getSuggestions(suggestion: Suggestion) {
+    private getSuggestions = (suggestion: Suggestion) => {
         let inputValue = "";
         if (suggestion.value) {
             inputValue = suggestion.value.trim().toLowerCase();
@@ -131,29 +122,31 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
     // When suggestion is clicked, Teach Autosuggest how to calculate the
     // input value for every given suggestion.
-    private getSuggestionValue(suggestion: Suggestion): string {
+    private getSuggestionValue = (suggestion: Suggestion): string => {
         return suggestion.name;
     }
 
-    private renderSuggestion(suggestion: Suggestion) {
+    private renderSuggestion = (suggestion: Suggestion) => {
         return createElement("span", { className: "" }, suggestion.name);
     }
 
-    private onSuggestionSelected(_event: Event, suggestion: Suggestion) {
+    private onSuggestionSelected = (_event: Event, suggestion: Suggestion) => {
         this.props.addTag(suggestion.suggestionValue);
         this.setState({ value: "" });
     }
 
-    private onSuggestionsClearRequested() {
+    private onSuggestionsClearRequested = () => {
         this.setState({ suggestions: this.props.suggestions });
     }
 
-    private handleOnChange(_event: Event, inputObject: Suggestion) {
-        if (inputObject.method === "type" && this.props.lazyLoad) {
+    private handleOnChange = (_event: Event, inputObject: Suggestion) => {
+        if (inputObject.method === "type" && this.props.lazyLoad && this.suggestionContainer) {
             this.suggestionContainer.classList.add("loader");
             setTimeout(() => {
                 this.fetchSuggestions(this.props);
-                this.suggestionContainer.classList.remove("loader");
+                if (this.suggestionContainer) {
+                    this.suggestionContainer.classList.remove("loader");
+                }
             }, 1000);
             this.setState({ value: inputObject.newValue });
         } else {
@@ -161,7 +154,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
         }
     }
 
-    private fetchSuggestions(props: AutoCompleteProps) {
+    private fetchSuggestions = (props: AutoCompleteProps) => {
         if (props.fetchSuggestions && props.lazyLoad) {
             props.fetchSuggestions();
         }
@@ -212,7 +205,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
         }
     }
 
-    private handleFocus(event: Event) {
+    private handleFocus = (event: Event) => {
         const suggestionInput = event.target as HTMLElement;
         const inputContainer = suggestionInput.parentElement as HTMLElement;
         const tagSpan = inputContainer.parentElement as HTMLElement;
@@ -231,7 +224,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
         }
     }
 
-    private handleOnblur(event: Event) {
+    private handleOnblur = (event: Event) => {
         const suggestionInput = event.target as HTMLInputElement;
         const suggestContainer = suggestionInput.parentElement as HTMLElement;
         const span = suggestContainer.parentElement as HTMLElement;
@@ -250,7 +243,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
         }
     }
 
-    private handleKeyPress(event: Event) {
+    private handleKeyPress = (event: Event) => {
         const input = event.target as HTMLInputElement;
         const keyPress = event as KeyboardEvent;
         const { onRemove, tagList } = this.props;
