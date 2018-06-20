@@ -45,11 +45,7 @@ describe("TagsInput", () => {
                 addOnBlur: true, addOnPaste: true, className: "tag-container",
                 disabled: false, inputProps, inputValue: "", onChange: jasmine.any(Function) as any,
                 onChangeInput: jasmine.any(Function) as any, renderInput: jasmine.any(Function) as any, value: []
-            }), createElement(Alert, {
-                bootstrapStyle: "danger",
-                className: "widget-tag-alert",
-                message: ""
-            }))
+            }), createElement(Alert, { className: "widget-tag-alert" }))
         );
     });
 

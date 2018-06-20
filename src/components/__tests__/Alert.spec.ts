@@ -1,41 +1,42 @@
 import { shallow } from "enzyme";
-import { createElement } from "react";
+import { ReactChild, createElement } from "react";
 
 import { Alert, AlertProps } from "../Alert";
 
 describe("Alert", () => {
-    const message = "This is an error";
-    const renderAlert = (props: AlertProps) => shallow(createElement(Alert, props));
-    const defaultProps: AlertProps = {
-        bootstrapStyle: "danger",
-        className: "widget-tag",
-        message
-    };
+    const renderAlert = (props: AlertProps, message: ReactChild) => shallow(createElement(Alert, props, message));
+    const alertMessage = "This is an error";
 
-    it("renders the structure when an alert message is specified", () => {
-        const alert = renderAlert(defaultProps);
+    it("renders structure correctly", () => {
+        const alert = renderAlert({}, alertMessage);
 
         expect(alert).toBeElement(
-            createElement("div", { className: "alert alert-danger widget-tag" }, message)
+            createElement("div", { className: "alert alert-danger" }, alertMessage)
         );
     });
 
     it("renders no structure when the alert message is not specified", () => {
-        const alert = shallow(createElement(Alert));
+        const alert = renderAlert({}, "");
 
         expect(alert).toBeElement(null);
     });
 
-    it("renders with the class of the specified bootstrap style", () => {
-        const alert = renderAlert(defaultProps);
+    it("renders with the specified class", () => {
+        const alert = renderAlert({ className: "widget-color-picker-alert" }, alertMessage);
+
+        expect(alert).toHaveClass("widget-color-picker-alert");
+    });
+
+    it("with no bootstrap style specified renders with the class alert-danger", () => {
+        const alert = renderAlert({}, alertMessage);
 
         expect(alert).toHaveClass("alert-danger");
+    });
 
-        alert.setProps({ bootstrapStyle: "default" });
+    it("renders with the matching class for the specified bootstrap style", () => {
+        const alert = renderAlert({ bootstrapStyle: "default" }, alertMessage);
+
         expect(alert).toHaveClass("alert-default");
-
-        alert.setProps({ bootstrapStyle: "success" });
-        expect(alert).toHaveClass("alert-success");
 
         alert.setProps({ bootstrapStyle: "primary" });
         expect(alert).toHaveClass("alert-primary");
@@ -43,14 +44,13 @@ describe("Alert", () => {
         alert.setProps({ bootstrapStyle: "info" });
         expect(alert).toHaveClass("alert-info");
 
+        alert.setProps({ bootstrapStyle: "success" });
+        expect(alert).toHaveClass("alert-success");
+
         alert.setProps({ bootstrapStyle: "warning" });
         expect(alert).toHaveClass("alert-warning");
-    });
 
-    it("renders with the specified class name", () => {
-        defaultProps.className = "widget-unit-test-class";
-        const alert = renderAlert(defaultProps);
-
-        expect(alert).toHaveClass(defaultProps.className);
+        alert.setProps({ bootstrapStyle: "danger" });
+        expect(alert).toHaveClass("alert-danger");
     });
 });
