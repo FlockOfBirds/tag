@@ -14,6 +14,7 @@ const widgetConfig = {
         filename: `src/com/mendix/widget/custom/${name}/${widgetName}.js`,
         libraryTarget: "umd"
     },
+    mode: "development",
     resolve: {
         extensions: [ ".ts", ".js" ],
         alias: {
@@ -68,6 +69,7 @@ const previewConfig = {
         filename: `src/${widgetName}.webmodeler.js`,
         libraryTarget: "commonjs"
     },
+    mode: "development",
     resolve: {
         extensions: [ ".ts", ".js" ]
     },

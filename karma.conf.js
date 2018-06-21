@@ -7,7 +7,8 @@ Object.assign(webpackConfig, {
         "react/lib/ExecutionEnvironment",
         "react/lib/ReactContext",
         "react/addons",
-        "jsdom"
+        "jsdom",
+        /^mxui\/|^mendix\/|^dojo\/|^dijit\//
     ]
 });
 
@@ -38,7 +39,7 @@ module.exports = function(config) {
         preprocessors: { "tests/test-index.js": [ "webpack", "sourcemap" ] },
         webpack: webpackConfig,
         webpackServer: { noInfo: true },
-        reporters: [ "progress", config.codeCoverage ? "coverage" : "kjhtml" ],
+        reporters: [ "spec", config.codeCoverage ? "coverage" : "kjhtml" ],
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
