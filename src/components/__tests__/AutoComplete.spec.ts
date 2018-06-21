@@ -1,4 +1,4 @@
-import { mount, shallow } from "enzyme";
+import { shallow } from "enzyme";
 import { createElement } from "react";
 
 import * as Autosuggest from "react-autosuggest";
@@ -6,19 +6,27 @@ import * as Autosuggest from "react-autosuggest";
 import { AutoComplete, AutoCompleteProps } from "../AutoComplete";
 
 describe("AutoComplete", () => {
-    const renderAutoComplete = (props: AutoCompleteProps) => shallow(createElement(AutoComplete, props));
-    const fullRenderAutoComplete = (props: AutoCompleteProps) => mount(createElement(AutoComplete, props));
+    const renderAutoComplete = (props: AutoCompleteProps) => shallow(createElement(AutoComplete, props), { disableLifecycleMethods: true });
+    // const fullRenderAutoComplete = (props: AutoCompleteProps) => mount(createElement(AutoComplete, props));
     const defaultProps: AutoCompleteProps = {
         addTag: () => jasmine.any(Function),
         inputPlaceholder: "",
         lazyLoad: false,
         suggestions: [ ]
     };
+    const suggestions = [ { method: "", name: "Tanzania", newValue: "", suggestionValue: "", value: "" },
+    { method: "", name: "Uganda", newValue: "", suggestionValue: "", value: "" },
+    { method: "", name: "Kenya", newValue: "", suggestionValue: "", value: "" } ];
+
+    const renderedSuggestion = `<li role="option" id="react-autowhatever-1--item-0"
+        aria-selected="false" class="react-autosuggest__suggestion react-autosuggest__suggestion--first"
+        data-suggestion-index="0">
+        <span class="">Kenya</span></li>`;
 
     it("renders the structure correctly", () => {
-        const autoComplete = renderAutoComplete(defaultProps);
+        const autoCompleteComponent: any = renderAutoComplete(defaultProps);
 
-        expect(autoComplete).toBeElement(
+        expect(autoCompleteComponent.getElement(0)).toBeElement(
             createElement(Autosuggest, {
                 getSuggestionValue: jasmine.any(Function),
                 inputProps: jasmine.any(Object),
@@ -57,47 +65,35 @@ describe("AutoComplete", () => {
         expect(autoComplete.state().suggestions).toEqual([]);
     });
 
-    it("should lazyload suggestions suggestions and lazyloading are enabled", () => {
-        const newProps: AutoCompleteProps = {
-            ...defaultProps,
-            fetchSuggestions: () => jasmine.any(Function) as any,
-            lazyLoad: true
+    it("should update suggestions based on user input", () => {
+        const customProps: AutoCompleteProps = {
+            addTag: () => jasmine.any(Function),
+            inputPlaceholder: "",
+            lazyLoad: false,
+            suggestions
         };
-
-        const suggestionValue = [ { method: "", name: "Uganda", newValue: "", suggestionValue: "", value: "" } ];
-        const suggestions = [ { method: "", name: "Tanzania", newValue: "", suggestionValue: "", value: "" },
-        { method: "", name: "Uganda", newValue: "", suggestionValue: "", value: "" },
-        { method: "", name: "Kenya", newValue: "", suggestionValue: "", value: "" } ];
-
-        const autoComplete = fullRenderAutoComplete(newProps);
+        const autoComplete = renderAutoComplete(customProps);
         const autoCompleteInstance = autoComplete.instance() as any;
-        const onChangeSpy = spyOn(autoCompleteInstance, "handleOnChange").and.callThrough();
-        const renderSuggestions = spyOn(autoCompleteInstance, "renderSuggestion").and.callThrough();
 
-        autoCompleteInstance.componentWillReceiveProps(newProps);
-        autoCompleteInstance.fetchSuggestions(newProps);
-        autoComplete.find("input").simulate("change", { target: { value: "U" } });
-        autoCompleteInstance.onSuggestionsFetchRequested(suggestions);
-        autoCompleteInstance.getSuggestions(suggestions);
-        autoCompleteInstance.renderSuggestion(suggestions);
-        autoCompleteInstance.getSuggestionValue(suggestionValue);
+        autoCompleteInstance.onSuggestionsFetchRequested({ reason: "input-changed", value: "K" });
+        autoCompleteInstance.getSuggestions({ reason: "input-changed", value: "K" });
+        spyOn(autoCompleteInstance, "renderSuggestion").and.returnValue(renderedSuggestion);
+        autoCompleteInstance.renderSuggestion(customProps.suggestions);
 
-        expect(onChangeSpy).toHaveBeenCalled();
-        expect(renderSuggestions).toHaveBeenCalled();
-        autoCompleteInstance.componentWillUnmount();
+        expect(autoCompleteInstance.renderSuggestion).toHaveBeenCalledWith(customProps.suggestions);
     });
 
     it("adds a new tag while from selected suggestion", () => {
-        const suggestions = {
-            method: "type", name: "Canada", newValue: "Uganda",
-            suggestionValue: "U", value: "Canada"
+        const newSuggestions = {
+            method: "type", name: "Canada", newValue: "Uganda", suggestionValue: "U", value: "Canada"
         };
         spyOn(defaultProps, "addTag").and.callThrough();
 
         const autoComplete = renderAutoComplete(defaultProps);
         const autoCompleteInstance = autoComplete.instance() as any;
-        autoCompleteInstance.onSuggestionSelected(jasmine.any(Event), suggestions);
+        autoCompleteInstance.onSuggestionSelected(jasmine.any(Event), newSuggestions);
 
         expect(defaultProps.addTag).toHaveBeenCalledTimes(1);
+        autoCompleteInstance.componentWillUnmount();
     });
 });

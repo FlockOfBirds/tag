@@ -8,7 +8,7 @@ import { Tag, TagProps } from "../Tag";
 import { Alert } from "../Alert";
 
 describe("TagsInput", () => {
-    const shallowRenderTag = (props: TagProps) => shallow(createElement(Tag, props));
+    const shallowRenderTag = (props: TagProps) => shallow(createElement(Tag, props), { disableLifecycleMethods: true });
     const fullRenderTag = (props: TagProps) => mount(createElement(Tag, props));
     const defaultProps: TagProps = {
         className: "",
@@ -31,9 +31,9 @@ describe("TagsInput", () => {
     };
 
     it("renders TagInput structure correctly", () => {
-        const tag = shallowRenderTag(defaultProps);
+        const tag: any = shallowRenderTag(defaultProps);
 
-        expect(tag).toBeElement(
+        expect(tag.getElement(0)).toBeElement(
             createElement("div", {
                 className: classNames(
                     "widget-tag",
