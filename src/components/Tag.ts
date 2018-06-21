@@ -1,5 +1,4 @@
 import { Component, createElement } from "react";
-import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
 
 import { Alert } from "./Alert";
@@ -48,10 +47,6 @@ export class Tag extends Component<TagProps, TagState> {
             newTag: this.props.newTag,
             tagList: props.tagList
         };
-
-        this.renderAutoComplete = this.renderAutoComplete.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handleChangeInput = this.handleChangeInput.bind(this);
     }
 
     render() {
@@ -81,9 +76,7 @@ export class Tag extends Component<TagProps, TagState> {
     }
 
     componentDidMount() {
-        const node = findDOMNode(this) as HTMLElement;
-        const tagInputSelector = node.querySelectorAll(".react-tagsinput-input"); // TODO: use listview to improve this
-
+        const tagInputSelector = document.querySelectorAll(".react-tagsinput-input");
         this.addEvents(tagInputSelector);
     }
 
@@ -99,8 +92,7 @@ export class Tag extends Component<TagProps, TagState> {
     }
 
     componentWillUnmount() {
-        const queryNode = findDOMNode(this) as HTMLElement;
-        const inputNodeList = queryNode.querySelectorAll(".react-tagsinput-input"); // FIXME: find alternative way to do so
+        const inputNodeList = document.querySelectorAll(".react-tagsinput-input");
 
         for (let i = 0; inputNodeList[i]; i++) {
             inputNodeList[i].removeEventListener("focus", this.handleFocus, true);
@@ -108,7 +100,7 @@ export class Tag extends Component<TagProps, TagState> {
         }
     }
 
-    private renderAutoComplete() {
+    private renderAutoComplete = () => {
         return createElement(AutoComplete, {
             addTag: (tag: string) => this.processTag(tag),
             fetchSuggestions: this.props.fetchSuggestions,
@@ -121,11 +113,11 @@ export class Tag extends Component<TagProps, TagState> {
         });
     }
 
-    private handleChangeInput(newTag: string) {
+    private handleChangeInput = (newTag: string) => {
         this.setState({ newTag });
     }
 
-    private handleChange(tagList: string[], changed: string[]) {
+    private handleChange = (tagList: string[], changed: string[]) => {
         if (this.props.onRemove && this.state.tagList.length > tagList.length) {
             this.props.onRemove(changed.toString());
             this.setState({ alertMessage: "", tagList });

@@ -8,22 +8,12 @@ export class ValidateConfigs extends Component<TagContainerProps & { showOnError
         const message = ValidateConfigs.validate(this.props);
 
         if (message) {
-            const alertClassName = "widget-tag-text-alert";
-
             if (this.props.showOnError) {
                 return createElement("div", { className: "widget-tag-text-invalid" },
-                    createElement(Alert, {
-                        bootstrapStyle: "danger",
-                        className: alertClassName,
-                        message
-                    }),
+                    createElement(Alert, { className: "widget-tag-alert" }, message),
                     this.props.children as ReactElement<TagContainerProps>);
             } else {
-                return createElement(Alert, {
-                    bootstrapStyle: "danger",
-                    className: alertClassName,
-                    message
-                });
+                return createElement(Alert, { className: "widget-tag-alert" }, message);
             }
         }
 

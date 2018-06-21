@@ -1,5 +1,4 @@
 import { Component, createElement } from "react";
-import { findDOMNode } from "react-dom";
 
 import * as Autosuggest from "react-autosuggest";
 
@@ -31,8 +30,7 @@ interface AutoCompleteState {
 }
 
 export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState> {
-    private node?: Element;
-    private suggestionContainer?: Element;
+    private suggestionContainer?: HTMLElement;
 
     constructor(props: AutoCompleteProps) {
         super(props);
@@ -68,11 +66,9 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     }
 
     componentDidMount() {
-        this.node = findDOMNode(this) as HTMLElement;
-        const suggestionInput = this.node.querySelectorAll(".react-autosuggest__input");
-        if (this.node.firstElementChild) {
-            this.suggestionContainer = this.node.firstElementChild.nextElementSibling as Element;
-        }
+        const suggestionInput = document.getElementsByClassName("react-autosuggest__input");
+        this.suggestionContainer = document.getElementById("react-autowhatever-1") as HTMLElement;
+
         if (suggestionInput) {
             this.addEventListener(suggestionInput);
         }
@@ -88,11 +84,9 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     }
 
     componentWillUnmount() {
-        if (this.node) {
-            const suggestionInput = this.node.querySelectorAll(".react-autosuggest__input");
-            if (suggestionInput) {
-                this.removeEventsListeners(suggestionInput);
-            }
+        const suggestionInput = document.querySelectorAll(".react-autosuggest__input");
+        if (suggestionInput) {
+            this.removeEventsListeners(suggestionInput);
         }
     }
 
@@ -161,20 +155,18 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     }
 
     private addEventListener(nodes: NodeListOf<Element>) {
+        if (this.suggestionContainer) {
+            const suggestionContainer = this.suggestionContainer as HTMLElement;
+            const tagContainer = suggestionContainer.offsetParent as HTMLElement;
+
+            tagContainer.addEventListener("focus", this.hundleContainerFocus, true);
+            tagContainer.addEventListener("click", this.hundleClick, true);
+        }
+
         for (let i = 0; nodes[i]; i++) {
             const node = nodes[i] as HTMLElement;
-            const suggestionContainer = node.parentNode as HTMLElement;
-            const suggestionSpan = suggestionContainer.parentNode as HTMLElement;
-            const tagContainer = suggestionSpan.parentNode as HTMLElement;
-
-            if (tagContainer) {
-                tagContainer.addEventListener("focus", this.hundleContainerFocus, true);
-                tagContainer.addEventListener("click", this.hundleClick, true);
-            }
-            if (node) {
-                node.addEventListener("keydown", this.handleKeyPress, true);
-                node.addEventListener("focus", this.handleFocus, true);
-            }
+            node.addEventListener("keydown", this.handleKeyPress, true);
+            node.addEventListener("focus", this.handleFocus, true);
         }
     }
 
