@@ -26,22 +26,21 @@ describe("TagInput", () => {
         HomePage.textInput.setValue(test2);
         browser.keys("Enter");
         HomePage.textInput.click();
-
-        HomePage.textInput.click();
         browser.keys("Backspace");
-        HomePage.tagsContainer.waitForVisible();
+        HomePage.tagsContainer.waitForValue();
 
         expect(HomePage.tagsContainer.getText()).not.toContain(test2);
     });
 
     it("should show suggestions when user starts typing", () => {
-        const result = test2.charAt(0);
+        const suggestion = test1.charAt(0);
 
         Suggestions.openSuggestion();
-        Suggestions.TestInput.waitForVisible();
+        Suggestions.TestInput.waitForExist();
         Suggestions.TestInput.click();
-        Suggestions.TestInput.setValue(result);
-        Suggestions.suggestionList.waitForVisible(1000);
+        browser.keys("Backspace");
+        Suggestions.TestInput.setValue(suggestion);
+        Suggestions.suggestionList.waitForExist();
 
         const suggestionList = Suggestions.suggestionList.getText();
         expect(suggestionList).toContain(test2);

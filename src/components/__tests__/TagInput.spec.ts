@@ -53,14 +53,15 @@ describe("TagsInput", () => {
         const newValue = "foo";
         const newProps: TagProps = {
             ...defaultProps,
-            createTag: () => jasmine.any(Function) as any
+            addTagEvents: () => jasmine.any(Function) as any,
+            createTag: () => jasmine.any(Function) as any,
+            removeTagEvents: () => jasmine.any(Function) as any
         };
 
         spyOn(newProps, "createTag").and.callThrough();
         const tag = fullRenderTag(newProps);
         const tagInstance = tag.instance() as any;
         const handleChangeSpy = spyOn(tagInstance, "handleChange").and.callThrough();
-        const addEventsSpy = spyOn(tagInstance, "addEvents").and.callThrough();
 
         tagInstance.componentDidMount();
         tagInstance.componentWillReceiveProps(newProps);
@@ -68,7 +69,6 @@ describe("TagsInput", () => {
         input.simulate("keyDown", { keyCode: 13 });
 
         expect(handleChangeSpy).toHaveBeenCalled();
-        expect(addEventsSpy).toHaveBeenCalled();
         tagInstance.componentWillUnmount();
         setTimeout(() => {
             expect(newProps.createTag).toHaveBeenCalledWith(newValue);

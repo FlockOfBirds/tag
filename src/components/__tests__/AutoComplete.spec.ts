@@ -1,4 +1,4 @@
-import { shallow } from "enzyme";
+import { mount, shallow } from "enzyme";
 import { createElement } from "react";
 
 import * as Autosuggest from "react-autosuggest";
@@ -7,7 +7,7 @@ import { AutoComplete, AutoCompleteProps } from "../AutoComplete";
 
 describe("AutoComplete", () => {
     const renderAutoComplete = (props: AutoCompleteProps) => shallow(createElement(AutoComplete, props), { disableLifecycleMethods: true });
-    // const fullRenderAutoComplete = (props: AutoCompleteProps) => mount(createElement(AutoComplete, props));
+    const fullRenderAutoComplete = (props: AutoCompleteProps) => mount(createElement(AutoComplete, props));
     const defaultProps: AutoCompleteProps = {
         addTag: () => jasmine.any(Function),
         inputPlaceholder: "",
@@ -20,8 +20,15 @@ describe("AutoComplete", () => {
 
     const renderedSuggestion = `<li role="option" id="react-autowhatever-1--item-0"
         aria-selected="false" class="react-autosuggest__suggestion react-autosuggest__suggestion--first"
-        data-suggestion-index="0">
-        <span class="">Kenya</span></li>`;
+        data-suggestion-index="0"><span class="">Kenya</span></li>`;
+
+    const customProps: AutoCompleteProps = {
+        addTag: () => jasmine.any(Function),
+        fetchSuggestions: () => jasmine.any(Function),
+        inputPlaceholder: "",
+        lazyLoad: true,
+        suggestions
+    };
 
     it("renders the structure correctly", () => {
         const autoCompleteComponent: any = renderAutoComplete(defaultProps);
@@ -66,12 +73,6 @@ describe("AutoComplete", () => {
     });
 
     it("should update suggestions based on user input", () => {
-        const customProps: AutoCompleteProps = {
-            addTag: () => jasmine.any(Function),
-            inputPlaceholder: "",
-            lazyLoad: false,
-            suggestions
-        };
         const autoComplete = renderAutoComplete(customProps);
         const autoCompleteInstance = autoComplete.instance() as any;
 
@@ -83,7 +84,39 @@ describe("AutoComplete", () => {
         expect(autoCompleteInstance.renderSuggestion).toHaveBeenCalledWith(customProps.suggestions);
     });
 
-    it("adds a new tag while from selected suggestion", () => {
+    it("should allow user input", () => {
+        const autoCompleteInstance = fullRenderAutoComplete(customProps);
+        autoCompleteInstance.setProps({ lazyLoad: true });
+        autoCompleteInstance.find("input").simulate("change", { target: { value: "K" } });
+
+        expect(autoCompleteInstance.state().value).toBe("K");
+    });
+
+    it("should render suggestions when they are lazyload", () => {
+        const autoComplete = renderAutoComplete(customProps);
+        const autoCompleteInstance = autoComplete.instance() as any;
+
+        autoCompleteInstance.onSuggestionsFetchRequested({ reason: "input-changed", value: "K" });
+        autoCompleteInstance.getSuggestions({ reason: "input-changed", value: "K" });
+        spyOn(autoCompleteInstance, "renderSuggestion").and.returnValue(renderedSuggestion);
+        autoCompleteInstance.renderSuggestion(customProps.suggestions);
+
+        expect(autoCompleteInstance.renderSuggestion).toHaveBeenCalledWith(customProps.suggestions);
+    });
+
+    it("should fetch suggestions when lazyload is set to true", () => {
+        const autoComplete = renderAutoComplete(customProps);
+        const autoCompleteInstance = autoComplete.instance() as any;
+
+        autoCompleteInstance.onSuggestionsFetchRequested({ reason: "input-changed", value: "K" });
+        autoCompleteInstance.getSuggestions({ reason: "input-changed", value: "K" });
+        spyOn(autoCompleteInstance, "fetchSuggestions").and.callThrough();
+        autoCompleteInstance.fetchSuggestions(customProps);
+
+        expect(autoCompleteInstance.fetchSuggestions).toHaveBeenCalled();
+    });
+
+    it("should add a new tag when selected from suggestion", () => {
         const newSuggestions = {
             method: "type", name: "Canada", newValue: "Uganda", suggestionValue: "U", value: "Canada"
         };
