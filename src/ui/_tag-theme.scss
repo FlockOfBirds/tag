@@ -1,0 +1,69 @@
+.widget-tag-default {
+    .react-tagsinput-tag {
+        background-color: $brand-default;
+        color: $brand-inverse;
+        a {
+            color: $brand-inverse;
+        }
+    }
+}
+
+.widget-tag-primary {
+    .react-tagsinput-tag {
+        background-color: $brand-primary;
+        color: $gray-lighter;
+        a {
+            color: $gray-lighter;
+        }
+    }
+}
+
+.widget-tag-inverse {
+    .react-tagsinput-tag {
+        background-color: $brand-inverse;
+        color: $gray-lighter;
+        a {
+            color: $gray-lighter;
+        }
+    }
+}
+
+.widget-tag-info {
+    .react-tagsinput-tag {
+        background-color: $brand-info;
+        color: $gray-lighter;
+        a {
+            color: $gray-lighter;
+        }
+    }
+}
+
+.widget-tag-success {
+    .react-tagsinput-tag {
+        background-color: $brand-success;
+        color: $gray-lighter;
+        a {
+            color: $gray-lighter;
+        }
+    }
+}
+
+.widget-tag-danger {
+    .react-tagsinput-tag {
+        background-color: $brand-danger;
+        color: $gray-lighter;
+        a {
+            color: $gray-lighter;
+        }
+    }
+}
+
+.widget-tag-warning {
+    .react-tagsinput-tag {
+        background-color: $brand-warning;
+        color: $gray-lighter;
+        a {
+            color: $gray-lighter;
+        }
+    }
+}
