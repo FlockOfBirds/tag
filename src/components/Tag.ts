@@ -17,10 +17,12 @@ export interface TagProps {
     createTag?: (tag: string) => void;
     enableSuggestions?: boolean;
     fetchSuggestions?: () => void;
-    onRemove?: (tag: string) => void;
+    addTagEvents?: (nodeList: NodeListOf<Element>) => void;
+    removeTagEvents?: (nodeList: NodeListOf<Element>) => void;
     inputPlaceholder: string;
     lazyLoad?: boolean;
     newTag: string;
+    onRemove?: (tag: string) => void;
     readOnly: boolean;
     style?: object;
     suggestions: string[];
@@ -76,8 +78,10 @@ export class Tag extends Component<TagProps, TagState> {
     }
 
     componentDidMount() {
-        const tagInputSelector = document.querySelectorAll(".react-tagsinput-input");
-        this.addEvents(tagInputSelector);
+        const inputNodeList = document.querySelectorAll(".react-tagsinput-input");
+        if (this.props.addTagEvents) {
+            this.props.addTagEvents(inputNodeList);
+        }
     }
 
     componentWillReceiveProps(newProps: TagProps) {
@@ -93,10 +97,8 @@ export class Tag extends Component<TagProps, TagState> {
 
     componentWillUnmount() {
         const inputNodeList = document.querySelectorAll(".react-tagsinput-input");
-
-        for (let i = 0; inputNodeList[i]; i++) {
-            inputNodeList[i].removeEventListener("focus", this.handleFocus, true);
-            inputNodeList[i].removeEventListener("blur", this.handleOnblur, true);
+        if (this.props.removeTagEvents) {
+            this.props.removeTagEvents(inputNodeList);
         }
     }
 
@@ -140,31 +142,5 @@ export class Tag extends Component<TagProps, TagState> {
         } else {
             this.setState({ alertMessage: tagLimitMessage.replace("{limit}", `${tagLimit}`), newTag });
         }
-    }
-
-    private addEvents(nodes: NodeListOf<Element>) {
-        for (let i = 0; nodes[i]; i++) {
-            const node = nodes[i] as HTMLElement;
-
-            node.addEventListener("focus", this.handleFocus, true);
-            node.addEventListener("blur", this.handleOnblur, true);
-        }
-    }
-
-    private handleFocus(event: Event) {
-        const tagInput = event.target as HTMLElement;
-        const tagSpan = tagInput.parentElement as HTMLElement;
-        const tagContainer = tagSpan.parentElement as HTMLElement;
-
-        tagContainer.classList.add("form-control");
-    }
-
-    private handleOnblur(event: Event) {
-        const tagInput = event.target as HTMLElement;
-        const tagSpan = tagInput.parentElement as HTMLElement;
-        const tagContainer = tagSpan.parentElement as HTMLElement;
-
-        tagContainer.classList.add("form-control");
-        tagContainer.classList.remove("react-tagsinput--focused");
     }
 }

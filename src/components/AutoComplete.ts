@@ -171,20 +171,18 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     }
 
     private removeEventsListeners(nodes: NodeListOf<Element>) {
+        if (this.suggestionContainer) {
+            const suggestionContainer = this.suggestionContainer as HTMLElement;
+            const tagContainer = suggestionContainer.offsetParent as HTMLElement;
+
+            tagContainer.removeEventListener("focus", this.hundleContainerFocus, true);
+            tagContainer.removeEventListener("click", this.hundleClick, true);
+        }
+
         for (let i = 0; nodes[i]; i++) {
             const node = nodes[i] as HTMLElement;
-            const suggestionContainer = node.parentNode as HTMLElement;
-            const suggestionSpan = suggestionContainer.parentNode as HTMLElement;
-            const tagContainer = suggestionSpan.parentNode as HTMLElement;
-
-            if (tagContainer) {
-                tagContainer.removeEventListener("focus", this.hundleContainerFocus, true);
-                tagContainer.removeEventListener("click", this.hundleClick, true);
-            }
-            if (node) {
-                node.removeEventListener("keydown", this.handleKeyPress, true);
-                node.removeEventListener("focus", this.handleFocus, true);
-            }
+            node.removeEventListener("keydown", this.handleKeyPress, true);
+            node.removeEventListener("focus", this.handleFocus, true);
         }
     }
 

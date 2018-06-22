@@ -3,6 +3,8 @@ import { Component, createElement } from "react";
 import { BootstrapStyle, Tag } from "./Tag";
 import { ValidateConfigs } from "../utils/ValidateConfigs";
 
+import { addTagEvents, removeTagEvents } from "../utils/Events";
+
 interface WrapperProps {
     class?: string;
     mxObject: mendix.lib.MxObject;
@@ -68,6 +70,7 @@ export default class TagContainer extends Component<TagContainerProps, TagContai
 
     render() {
         return createElement(Tag, {
+            addTagEvents: this.addTagEvents,
             alertMessage: this.state.alertMessage,
             className: this.props.class,
             createTag: this.validateTag,
@@ -78,6 +81,7 @@ export default class TagContainer extends Component<TagContainerProps, TagContai
             newTag: this.state.newTag,
             onRemove: this.removeTag,
             readOnly: this.isReadOnly(),
+            removeTagEvents: this.removeTagEvents,
             style: ValidateConfigs.parseStyle(this.props.style),
             suggestions: this.state.suggestions,
             tagLimit: this.props.tagLimit,
@@ -293,5 +297,13 @@ export default class TagContainer extends Component<TagContainerProps, TagContai
             error: error => window.mx.ui.error(`Error while executing microflow: ${action}: ${error.message}`),
             origin: this.props.mxform
         });
+    }
+
+    private addTagEvents = (nodeList: NodeListOf<Element>) => {
+        addTagEvents(nodeList);
+    }
+
+    private removeTagEvents = (nodeList: NodeListOf<Element>) => {
+        removeTagEvents(nodeList);
     }
 }
